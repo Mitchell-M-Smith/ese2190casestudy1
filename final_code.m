@@ -1,3 +1,6 @@
+close all;
+
+
 %% Task 2: Initial Visualizations of Solutions & Phase Portraits
 % These plots correspond to Figures 2-4 in the paper.
 
@@ -67,10 +70,38 @@ end
 
 
 %% Task 3: Vector Field & Trajectory for mu = 0 (Simple Harmonic motion)
-% These plots correspond to Figure 6 in the paper.
+% This code plots Figure 6 in the paper.
 
-% (to be inserted)
+vdp = @(t, y, mu) [y(2); mu * (1 - y(1)^2) * y(2) - y(1)];
 
+time_range = [0 20];
+y0 = [1; 0]; %the initial conditions are x(0) = 1, dx/dt(0) = 0
+mu = 0; %The only value of mu we wish to plot is 0
+[x, y] = meshgrid(linspace(-3, 3, 20), linspace(-3, 3, 20)); % creates the vector field
+
+[t, z] = ode45(@(t, y) vdp(t, y, mu), time_range, y0); % solve
+
+% initializing the vector field in x & y directions
+dxdt = y;
+dydt = mu * (1 - x.^2) .* y - x;
+
+% normalizing the vectors to better fit on the grid
+dxdt = dxdt ./ sqrt(dxdt.^2 + dydt.^2);
+dydt = dydt ./ sqrt(dxdt.^2 + dydt.^2);
+
+% plotting
+figure;
+hold on;
+quiver(x, y, dxdt, dydt, 'r', 'DisplayName', 'Vector Field');
+plot(z(:,1), z(:,2), 'b-', 'DisplayName', 'Trajectory');
+
+title('Van der Pol Oscillator for \mu = 0');
+xlabel('x');
+ylabel('dx/dt');
+legend('Location', 'Best');
+grid on;
+axis equal;
+hold off;
 
 %% Task 4: Limit Cycle Oscillations from mu = 0.01 to 100
 % These plots correspond to Figures 7-16 in the paper.
